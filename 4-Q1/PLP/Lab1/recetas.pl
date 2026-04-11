@@ -1,3 +1,10 @@
+% Recursos basicos
+recurso_basico(hierro).
+recurso_basico(cobre).
+recurso_basico(carbon).
+recurso_basico(arena).
+recurso_basico(petroleo).
+
 % Nivel 1
 receta(lingote_hierro, [hierro, carbon]).
 receta(lingote_cobre, [cobre, carbon]).
