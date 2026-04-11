@@ -12,10 +12,20 @@ fabricacion_posible(Producto, Cantidad) :-
     Stock >= Cantidad.
 
 fabricacion_posible(Producto, Cantidad) :-
+    \+ inventario(Producto, _),
     \+ recurso_basico(Producto),
     receta(Producto, ListaIngredientes),
     agrupar_ingredientes(ListaIngredientes, Agrupados),
     verificar_agrupados(Agrupados, Cantidad).
+
+fabricacion_posible(Producto, Cantidad) :-
+    inventario(Producto, Stock),
+    Stock < Cantidad,
+    Required is Cantidad - Stock,
+    \+ recurso_basico(Producto),
+    receta(Producto, ListaIngredientes),
+    agrupar_ingredientes(ListaIngredientes, Agrupados),
+    verificar_agrupados(Agrupados, Required).
 
 /*
     AUXILIAR: agrupar_ingredientes
