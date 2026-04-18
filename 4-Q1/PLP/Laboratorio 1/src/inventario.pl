@@ -1,0 +1,9 @@
+% Inventario
+inventario(hierro, 100).
+inventario(cobre, 50).
+inventario(carbon, 150).
+inventario(arena, 40).
+inventario(petroleo, 200).
+inventario(lingote_hierro, 10).
+inventario(engranaje, 5).
+inventario(cable, 20).
