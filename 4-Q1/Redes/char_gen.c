@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define PORTNUMBER 12349
+#define PORTNUMBER 12350
 
 void socket_service(void)
 {
@@ -35,19 +35,33 @@ void socket_service(void)
         len = sizeof(struct sockaddr_in);
         ns = accept(s, (struct sockaddr *)&direcc, &len);
 
-        while (1)
+        char buffer[64];
+
+        int mensaje_cliente = recv(ns, &buffer, sizeof(buffer) - 1, MSG_WAITALL);
+        buffer[mensaje_cliente] = '\0';
+
+        if (mensaje_cliente <= 0)
         {
+            printf("Error al recibir mensaje del cliente.\n");
+            close(ns);
+            continue;
+        }
 
-            char c = 'A' + rand() % 26;
-            int n = send(ns, &c, 1, MSG_NOSIGNAL);
+        int n1, n2;
+        int result_scan = sscanf(buffer, "%d %d", &n1, &n2);
 
-            if (n <= 0)
-            {
-                printf("Cliente desconectado\n");
-                break;
-            }
+        if (result_scan != 2)
+        {
+            printf("Cantidad de parámetros incorrecta.\n");
+            close(ns);
+            continue;
+        }
+        int suma = n1 + n2;
+        int result_send = send(ns, &suma, sizeof(int), MSG_NOSIGNAL);
 
-            usleep(10000);
+        if (n <= 0)
+        {
+            printf("Error al enviar la respuesta al cliente.\n");
         }
         close(ns);
     }
