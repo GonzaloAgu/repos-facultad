@@ -12,8 +12,6 @@
 
 void socket_service(void)
 {
-    srand(time(NULL));
-    char buf[10];
     int s, n, ns, len;
     struct sockaddr_in direcc;
     s = socket(AF_INET, SOCK_STREAM, 0);
@@ -27,39 +25,57 @@ void socket_service(void)
     direcc.sin_port = htons(PORTNUMBER);
     direcc.sin_addr.s_addr = htonl(INADDR_ANY);
     len = sizeof(struct sockaddr_in);
-    bind(s, (struct sockaddr *)&direcc, len);
+    int bind_res = bind(s, (struct sockaddr *)&direcc, len);
+
+    if (bind_res < 0)
+    {
+        perror("bind");
+        exit(1);
+    }
     listen(s, 5);
 
     while (1)
     {
         len = sizeof(struct sockaddr_in);
         ns = accept(s, (struct sockaddr *)&direcc, &len);
+        printf("Cliente conectado. Leyendo mensaje\n");
 
         char buffer[64];
 
-        int mensaje_cliente = recv(ns, &buffer, sizeof(buffer) - 1, MSG_WAITALL);
-        buffer[mensaje_cliente] = '\0';
+        int mensaje_cliente = recv(ns, buffer, sizeof(buffer) - 1, 0);
 
         if (mensaje_cliente <= 0)
         {
             printf("Error al recibir mensaje del cliente.\n");
             close(ns);
             continue;
+            buffer[mensaje_cliente] = '\0';
         }
+
+        printf("Mensaje recibido: %s\n", buffer);
 
         int n1, n2;
         int result_scan = sscanf(buffer, "%d %d", &n1, &n2);
 
         if (result_scan != 2)
         {
-            printf("Cantidad de parámetros incorrecta.\n");
+            char msg[] = "Parámetros incorrectos.\n";
+            printf("%s", msg);
+
+            send(ns, msg, sizeof(msg), MSG_NOSIGNAL);
             close(ns);
             continue;
         }
-        int suma = n1 + n2;
-        int result_send = send(ns, &suma, sizeof(int), MSG_NOSIGNAL);
 
-        if (n <= 0)
+        printf("Enviando resultado de la suma\n");
+        int suma = n1 + n2;
+
+        char sumaString[64];
+        sprintf(sumaString, "%d\n", suma);
+
+        int result_send = send(ns, sumaString, sizeof(sumaString), MSG_NOSIGNAL);
+
+        if (result_send <= 0)
         {
             printf("Error al enviar la respuesta al cliente.\n");
         }
