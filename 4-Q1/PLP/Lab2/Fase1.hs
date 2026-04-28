@@ -8,7 +8,7 @@ module Fase1 where
     data Explorador = Explorador {
         profundidad :: Int,
         sector:: Int
-    } deriving Show
+    } deriving (Show, Eq)
 
 
     validar :: String -> Bool
@@ -60,6 +60,7 @@ module Fase1 where
         | not (validar comandos) = Nothing
         | otherwise = Just (ejecutarComandos explorador comandos)
 
+    -- auxiliar
     ejecutarComandos :: Explorador -> String -> Explorador
     ejecutarComandos explorador [] = explorador
     ejecutarComandos explorador (c:restoComandos)

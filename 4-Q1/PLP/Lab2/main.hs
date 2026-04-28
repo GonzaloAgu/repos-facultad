@@ -1,9 +1,14 @@
 import Fase1
+import Fase2
 
-
-
+-- Sujetos de prueba
 pepe = Explorador {
-    profundidad = 100,
-    sector = 1
+    profundidad = 0,
+    sector = 2
+}
+
+horacio = Explorador {
+    profundidad = 2,
+    sector = 0
 }
 
